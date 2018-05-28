@@ -4,6 +4,8 @@ import '../utils/authentications.dart';
 import '../utils/input_field.dart';
 import '../ui/rounded_button.dart';
 import '../ui/text_button.dart';
+import '../style.dart';
+import '../strings.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -20,14 +22,6 @@ class LoginPageState extends State<LoginPage> {
   bool autovalidate = false;
   Validations validations = Validations();
 
-  _onPressed() {
-    print("button clicked");
-  }
-
-  onPressed(String routeName) {
-    Navigator.of(context).pushNamed(routeName);
-  }
-
   void showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(value)));
   }
@@ -36,12 +30,12 @@ class LoginPageState extends State<LoginPage> {
     final FormState form = formKey.currentState;
     if (!form.validate()) {
       autovalidate = true; // Start validating on every change.
-      showInSnackBar('Please fix the errors in red before submitting.');
+      showInSnackBar(Strings.fixErrors);
     } else {
       form.save();
       userAuth.verifyUser(user).then((onValue) {
-        if (onValue == "Login Successfull")
-          Navigator.pushNamed(context, "/HomePage");
+        if (onValue == Strings.loginSuccess)
+          Navigator.pushNamed(context, Strings.homeRoute);
         else
           showInSnackBar(onValue);
       });
@@ -58,6 +52,7 @@ class LoginPageState extends State<LoginPage> {
         body: SingleChildScrollView(
             controller: scrollController,
             child: Container(
+              color: Colors.blue,
               padding: EdgeInsets.all(16.0),
               child: Column(
                 children: <Widget>[
@@ -69,6 +64,7 @@ class LoginPageState extends State<LoginPage> {
                       children: <Widget>[
                         Center(
                             child: Image(
+                          image: ExactAssetImage('lib/images/logo.png'),
                           width: (screenSize.width < 500)
                               ? 120.0
                               : (screenSize.width / 4) + 12.0,
@@ -89,9 +85,11 @@ class LoginPageState extends State<LoginPage> {
                           child: Column(
                             children: <Widget>[
                               InputField(
-                                  hintText: "Email",
+                                  hintText: Strings.emailHint,
                                   obscureText: false,
-                                  textInputType: TextInputType.text,
+                                  textInputType: TextInputType.emailAddress,
+                                  textStyle: textStyle,
+                                  textFieldColor: textFieldColor,
                                   icon: Icons.mail_outline,
                                   iconColor: Colors.white,
                                   bottomMargin: 20.0,
@@ -100,9 +98,11 @@ class LoginPageState extends State<LoginPage> {
                                     user.email = email;
                                   }),
                               InputField(
-                                  hintText: "Password",
+                                  hintText: Strings.passwordHint,
                                   obscureText: true,
                                   textInputType: TextInputType.text,
+                                  textStyle: textStyle,
+                                  textFieldColor: textFieldColor,
                                   icon: Icons.lock_open,
                                   iconColor: Colors.white,
                                   bottomMargin: 30.0,
@@ -112,29 +112,23 @@ class LoginPageState extends State<LoginPage> {
                                     user.password = password;
                                   }),
                               RoundedButton(
-                                buttonName: "Get Started",
+                                buttonName: Strings.loginBtn,
                                 onTap: _handleSubmitted,
                                 width: screenSize.width,
                                 height: 50.0,
                                 bottomMargin: 10.0,
                                 borderWidth: 0.0,
+                                buttonColor: Colors.amber,
+                              ),
+                              TextButton(
+                                buttonName: Strings.createAccountBtn,
+                                onPressed: () => Navigator
+                                    .of(context)
+                                    .pushNamed(Strings.signUpRoute),
                               ),
                             ],
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            TextButton(
-                              buttonName: "Create Account",
-                              onPressed: () => onPressed("/SignUp"),
-                            ),
-                            TextButton(
-                              buttonName: "Need Help?",
-                              onPressed: _onPressed,
-                            )
-                          ],
-                        )
                       ],
                     ),
                   )

@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import '../utils/quiz.dart';
 import '../ui/answer_button.dart';
 import '../ui/question_text.dart';
-import '../ui/correct_wrong_overlay.dart';
+import '../ui/points_overlay.dart';
 import '../pages/score_page.dart';
+import '../strings.dart';
 
 class AnswerTab extends StatefulWidget {
   @override
@@ -15,9 +16,7 @@ class AnswerTab extends StatefulWidget {
 
 class AnswerTabState extends State<AnswerTab> {
   Question curQuestion;
-
   Quiz quiz;
-
   String questionText;
   int questionNumber;
   bool isCorrect;
@@ -28,7 +27,10 @@ class AnswerTabState extends State<AnswerTab> {
   void initState() {
     super.initState();
 
-    Firestore.instance.collection('questions').getDocuments().then((snap) {
+    Firestore.instance
+        .collection(Strings.questionsCollection)
+        .getDocuments()
+        .then((snap) {
       onQuestionsRetrieved(snap.documents);
     });
   }
@@ -37,20 +39,23 @@ class AnswerTabState extends State<AnswerTab> {
     List<Question> questions = List();
     documents.forEach((document) {
       Map<String, dynamic> data = document.data;
-      questions.add(Question(data['question_text'], data['answer']));
+      questions.add(Question(
+          questionText: data[Strings.questionField],
+          answer1: data[Strings.answerOneField],
+          answer2: data[Strings.answerTwoField],
+          uid: data[Strings.userIdField]));
     });
 
     this.setState(() {
       quiz = Quiz(questions);
       curQuestion = quiz.nextQuestion;
-      questionText = curQuestion.question;
+      questionText = curQuestion.questionText;
       questionNumber = quiz.questionNumber;
     });
   }
 
   void handleAnswer(bool answer) {
-    isCorrect = (curQuestion.answer == answer);
-    quiz.answer(isCorrect);
+    // TODO: this lol
     this.setState(() {
       overlayVisible = true;
     });
@@ -64,7 +69,6 @@ class AnswerTabState extends State<AnswerTab> {
         children: <Widget>[
           quiz != null && quiz.length > 0
               ? Column(
-                  // Our main page...
                   children: <Widget>[
                     AnswerButton(true, () => handleAnswer(true)),
                     QuestionText(questionText, questionNumber),
@@ -73,7 +77,7 @@ class AnswerTabState extends State<AnswerTab> {
                 )
               : Container(),
           overlayVisible == true
-              ? CorrectWrongOverlay(isCorrect, () {
+              ? PointsOverlay(true, 50, () {
                   if (quiz.length == questionNumber) {
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
@@ -85,7 +89,7 @@ class AnswerTabState extends State<AnswerTab> {
                   curQuestion = quiz.nextQuestion;
                   this.setState(() {
                     overlayVisible = false;
-                    questionText = curQuestion.question;
+                    questionText = curQuestion.questionText;
                     questionNumber = quiz.questionNumber;
                   });
                 })

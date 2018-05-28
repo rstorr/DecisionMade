@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../tabs/answer_tab.dart';
 import '../tabs/ask_tab.dart';
+import '../strings.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -31,18 +32,18 @@ class HomePageState extends State<HomePage> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0.0,
-      title: Text("Decision Made"),
+      title: Text(Strings.appName),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.person),
           onPressed: () {},
-          tooltip: 'My Profile',
+          tooltip: Strings.profileTT,
         ),
       ],
       bottom: new TabBar(
         tabs: <Widget>[
-          new Tab(text: "Answer"),
-          new Tab(text: "Ask"),
+          new Tab(text: Strings.answerTab),
+          new Tab(text: Strings.askTab),
         ],
       ),
     );
@@ -50,10 +51,11 @@ class HomePageState extends State<HomePage> {
 
   Widget _buildFAB() {
     return new FloatingActionButton(
-      tooltip: 'Create company',
+      tooltip: Strings.newQuestionTT,
       child: const Icon(Icons.add),
       backgroundColor: Theme.of(context).accentColor,
-      onPressed: () {},
+      onPressed: () =>
+          Navigator.of(context).pushNamed(Strings.newQuestionRoute),
     );
   }
 }

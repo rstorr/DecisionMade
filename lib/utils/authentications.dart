@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../strings.dart';
 
 class UserData {
   String displayName;
@@ -25,6 +26,6 @@ class UserAuth {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     await firebaseAuth.signInWithEmailAndPassword(
         email: userData.email, password: userData.password);
-    return "Login Successfull";
+    return Strings.loginSuccess;
   }
 }

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-class CorrectWrongOverlay extends StatefulWidget {
-  final bool _isCorrect;
-  final VoidCallback _onTap; //void _onTap()
+class PointsOverlay extends StatefulWidget {
+  final bool _addPoints; // if false subtract from score.
+  final int _points;
+  final VoidCallback _onTap;
 
-  CorrectWrongOverlay(this._isCorrect, this._onTap);
+  PointsOverlay(this._addPoints, this._points, this._onTap);
 
   @override
-  State createState() => new CorrectWrongOverlayState();
+  State createState() => PointsOverlayState();
 }
 
-class CorrectWrongOverlayState extends State<CorrectWrongOverlay>
+class PointsOverlayState extends State<PointsOverlay>
     with SingleTickerProviderStateMixin {
   Animation<double> _iconAnimation;
   AnimationController _iconAnimationController;
@@ -47,17 +48,14 @@ class CorrectWrongOverlayState extends State<CorrectWrongOverlay>
                   BoxDecoration(color: Colors.white, shape: BoxShape.circle),
               child: Transform.rotate(
                 angle: _iconAnimation.value * 2 * pi,
-                child: Icon(
-                  widget._isCorrect == true ? Icons.done : Icons.clear,
-                  size: _iconAnimation.value * 80.0,
+                child: Text(
+                  widget._addPoints == true
+                      ? "+" + widget._points.toString()
+                      : "-" + widget._points.toString(),
+                  style: TextStyle(fontSize: _iconAnimation.value * 80.0),
                 ),
               ),
             ),
-            Padding(padding: EdgeInsets.only(bottom: 20.0)),
-            Text(
-              widget._isCorrect == true ? "Correct!" : "Wrong!",
-              style: TextStyle(color: Colors.white, fontSize: 30.0),
-            )
           ],
         ),
       ),
